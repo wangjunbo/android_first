@@ -2,7 +2,7 @@ plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
     // 可选：如果你需要使用 Compose 的预览功能
-    id 'org.jetbrains.kotlin.plugin.serialization' version '1.9.0'
+    id 'org.jetbrains.kotlin.android' version '1.9.10' // 修改这一行
 }
 
 android {
