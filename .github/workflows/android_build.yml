@@ -22,8 +22,13 @@ jobs:
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
 
+    - name: Install Gradle
+      uses: gradle/gradle-build-action@v2
+      with:
+        gradle-version: 8.2
+
     - name: Build with Gradle
-      run: ./gradlew build
+      run: gradle build
 
     - name: Upload APK
       uses: actions/upload-artifact@v4  # 更新为 v4
