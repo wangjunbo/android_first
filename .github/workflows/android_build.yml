@@ -30,8 +30,8 @@ jobs:
     - name: Upload APK
       uses: actions/upload-artifact@v4  # 更新为 v4
       with:
-        name: app-debug
+        name: app-debug # 这个名字好型不能改，改成其它的会报错
         path: |
-          app/build/outputs/apk/debug/app-debug.apk
+          app/build/outputs/apk/debug/app-debug.apk 
           app/build/outputs/apk/debug/output-metadata.json
         retention-days: 5

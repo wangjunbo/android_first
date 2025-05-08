@@ -4,42 +4,56 @@ import android.os.Bundle
 import android.webkit.WebSettings
 import android.webkit.WebView
 import android.webkit.WebViewClient
-import androidx.appcompat.app.AppCompatActivity
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.viewinterop.AndroidView
+import androidx.activity.compose.BackHandler
 
-class MainActivity : AppCompatActivity() {
-    private lateinit var webView: WebView
-
+class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-
-        webView = findViewById(R.id.webview)
-        setupWebView()
-        webView.loadUrl("https://t.ddz.cool/?room=wang1991")
-    }
-
-    private fun setupWebView() {
-        webView.settings.apply {
-            javaScriptEnabled = true
-            domStorageEnabled = true
-            allowFileAccess = true
-            mixedContentMode = WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
+        setContent {
+            WebViewScreen()
         }
+    }
+}
 
-        webView.webViewClient = object : WebViewClient() {
-            override fun shouldOverrideUrlLoading(view: WebView?, url: String?): Boolean {
-                view?.loadUrl(url ?: "")
-                return true
-            }
+@Composable
+fun WebViewScreen() {
+    val webView = remember {
+        WebView(Context).apply {
+            setupWebView()
+            loadUrl("https://t.ddz.cool/?room=wang1991")
         }
     }
 
-    override fun onDestroy() {
-        webView.clearHistory()
-        webView.clearCache(true)
-        webView.loadUrl("about:blank")
-        webView.removeAllViews()
-        webView.destroy()
-        super.onDestroy()
+    // 处理返回按钮
+    BackHandler(enabled = webView.canGoBack()) {
+        webView.goBack()
+    }
+
+    AndroidView(
+        factory = { webView },
+        modifier = Modifier.fillMaxSize()
+    )
+}
+
+private fun WebView.setupWebView() {
+    settings.apply {
+        javaScriptEnabled = true
+        domStorageEnabled = true
+        allowFileAccess = true
+        mixedContentMode = WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
+    }
+
+    webViewClient = object : WebViewClient() {
+        override fun shouldOverrideUrlLoading(view: WebView?, url: String?): Boolean {
+            view?.loadUrl(url ?: "")
+            return true
+        }
     }
 }
