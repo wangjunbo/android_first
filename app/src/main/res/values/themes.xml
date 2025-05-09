@@ -1,9 +1,6 @@
-<!-- 使用正确的 Material Components 主题 -->
-<style name="Theme.HelloWorld" parent="Theme.Material3.DayNight.NoActionBar">
-    <!-- 状态栏透明 -->
-    <item name="android:statusBarColor">@android:color/transparent</item>
-    <item name="android:windowLightStatusBar">true</item> <!-- 浅色状态栏文字 -->
-    
-    <!-- 应用主色调 -->
-    <item name="colorPrimary">@color/purple_500</item>
-</style>
+<resources>
+
+    <!-- To see how these attributes are used, please visit https://material.io/develop/android/theming/color/ -->
+    <style name="Theme.HelloWorld" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+    </style>
+</resources>
