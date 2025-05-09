@@ -13,10 +13,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.activity.compose.BackHandler
+import androidx.core.view.WindowCompat
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.Text
+import androidx.compose.material3.MaterialTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        WindowCompat.setDecorFitsSystemWindows(window, false) // 允许内容延伸到状态栏
         setContent {
             WebViewScreen()
         }
@@ -25,24 +30,30 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun WebViewScreen() {
-    val context = LocalContext.current
-    
-    val webView = remember {
-        WebView(context).apply {
-            setupWebView()
-            loadUrl("https://t.ddz.cool/?room=wang1991")
+    Column(modifier = Modifier.fillMaxSize()) {
+        // 顶部应用栏
+        TopAppBar(
+            title = { Text("你的应用名称") }, // 替换为你的应用名
+            colors = TopAppBarDefaults.topAppBarColors(
+                containerColor = MaterialTheme.colorScheme.primaryContainer,
+                titleContentColor = MaterialTheme.colorScheme.onPrimaryContainer
+            )
+        )
+
+        // WebView 部分
+        val context = LocalContext.current
+        val webView = remember {
+            WebView(context).apply {
+                setupWebView()
+                loadUrl("https://t.ddz.cool/?room=wang1991")
+            }
         }
-    }
 
-    // 处理返回按钮
-    BackHandler(enabled = webView.canGoBack()) {
-        webView.goBack()
+        AndroidView(
+            factory = { webView },
+            modifier = Modifier.weight(1f) // 占据剩余空间
+        )
     }
-
-    AndroidView(
-        factory = { webView },
-        modifier = Modifier.fillMaxSize()
-    )
 }
 
 private fun WebView.setupWebView() {
