@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.activity.compose.BackHandler
 
@@ -24,8 +25,10 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun WebViewScreen() {
+    val context = LocalContext.current
+    
     val webView = remember {
-        WebView(Context).apply {
+        WebView(context).apply {
             setupWebView()
             loadUrl("https://t.ddz.cool/?room=wang1991")
         }
