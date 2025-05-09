@@ -6,68 +6,81 @@ import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.*
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.activity.compose.BackHandler
-import androidx.core.view.WindowCompat
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.Text
-import androidx.compose.material3.MaterialTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        WindowCompat.setDecorFitsSystemWindows(window, false) // 允许内容延伸到状态栏
         setContent {
-            WebViewScreen()
+            MaterialTheme {
+                WebViewScreen()
+            }
         }
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun WebViewScreen() {
+    val context = LocalContext.current
+    
+    // 创建WebView实例
+    val webView = remember {
+        WebView(context).apply {
+            settings.apply {
+                javaScriptEnabled = true
+                domStorageEnabled = true
+                allowFileAccess = true
+                mixedContentMode = WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
+            }
+            webViewClient = object : WebViewClient() {
+                override fun shouldOverrideUrlLoading(view: WebView?, url: String?): Boolean {
+                    url?.let { view?.loadUrl(it) }
+                    return true
+                }
+            }
+            // 加载URL
+            loadUrl("https://t.ddz.cool/?room=wang1991")
+        }
+    }
+    
+    // 处理返回键
+    BackHandler {
+        if (webView.canGoBack()) {
+            webView.goBack()
+        }
+    }
+    
+    // 清理资源
+    DisposableEffect(webView) {
+        onDispose {
+            webView.stopLoading()
+            webView.destroy()
+        }
+    }
+    
     Column(modifier = Modifier.fillMaxSize()) {
         // 顶部应用栏
         TopAppBar(
-            title = { Text("你的应用名称") }, // 替换为你的应用名
+            title = { Text("你的应用名称") },
             colors = TopAppBarDefaults.topAppBarColors(
                 containerColor = MaterialTheme.colorScheme.primaryContainer,
                 titleContentColor = MaterialTheme.colorScheme.onPrimaryContainer
             )
         )
-
+        
         // WebView 部分
-        val context = LocalContext.current
-        val webView = remember {
-            WebView(context).apply {
-                setupWebView()
-                loadUrl("https://t.ddz.cool/?room=wang1991")
-            }
-        }
-
         AndroidView(
             factory = { webView },
-            modifier = Modifier.weight(1f) // 占据剩余空间
+            modifier = Modifier.weight(1f)
         )
-    }
-}
-
-private fun WebView.setupWebView() {
-    settings.apply {
-        javaScriptEnabled = true
-        domStorageEnabled = true
-        allowFileAccess = true
-        mixedContentMode = WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
-    }
-
-    webViewClient = object : WebViewClient() {
-        override fun shouldOverrideUrlLoading(view: WebView?, url: String?): Boolean {
-            view?.loadUrl(url ?: "")
-            return true
-        }
     }
 }
